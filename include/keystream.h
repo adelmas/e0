@@ -1,0 +1,39 @@
+#ifndef KEYSTREAM_H
+#define KEYSTREAM_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+
+#define MATRIX_SIZE 16
+
+typedef struct Register Register;
+struct Register {
+    uint64_t r;
+    int size;
+};
+
+typedef struct Registers Registers;
+struct Registers {
+    Register r1;
+    Register r2;
+    Register r3;
+    Register r4;
+};
+
+int bit_get(int, int, int);
+void show_binary(int);
+void register_shift4(Register*, int, int, int, int);
+int st_next(int, int);
+int ct_next(int, int*);
+
+void matrix_setNextStates(int **, int, int, int);
+void matrix_display(int **, int);
+int matrix_findPreviousState(int **, int, int);
+void matrix_setOutputBits(int **, int);
+int **matrix_allocate(int);
+void matrix_desallocate(int **, int);
+int **matrix_createOutputMatrix(int);
+int **matrix_createTransitionMatrix(int);
+#endif // KEYSTREAM_H
