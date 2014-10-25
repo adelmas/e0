@@ -22,7 +22,7 @@ int main(int argc, char *arv[]) {
 
     /* - Finite State Machine ---- */
     fsm = matrix_createTransitionMatrix(MATRIX_SIZE);
-    #if NDEBUG
+    #ifdef NDEBUG
     printf("Finite State Machine :\n");
     matrix_display(fsm, MATRIX_SIZE);
     #endif
@@ -30,7 +30,7 @@ int main(int argc, char *arv[]) {
 
     /* - Output ---- */
     output = matrix_createOutputMatrix(MATRIX_SIZE);
-    #if NDEBUG
+    #ifdef NDEBUG
     printf("Output :\n");
     matrix_display(output, MATRIX_SIZE);
     #endif
