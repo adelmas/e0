@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "keystream.h"
+#include "utils.h"
 
 int main(int argc, char *arv[]) {
     uint64_t start = 6;

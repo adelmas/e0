@@ -1,11 +1,6 @@
 #ifndef KEYSTREAM_H
 #define KEYSTREAM_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-
 #define MATRIX_SIZE 16
 
 typedef struct Register Register;
@@ -22,8 +17,6 @@ struct Registers {
     Register r4;
 };
 
-int bit_get(int, int, int);
-void show_binary(int);
 void register_shift4(Register*, int, int, int, int);
 int st_next(int, int);
 int ct_next(int, int*);
