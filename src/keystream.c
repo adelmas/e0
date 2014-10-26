@@ -79,7 +79,7 @@ void matrix_setNextStates(int **matrix, int state, int prev_state, int size) {
  * @param size
  * @return Integer, one of the previous states.
  */
-int matrix_findPreviousState(int **matrix, int state, int size) {
+int matrix_getPreviousState(int **matrix, int state, int size) {
     int i, j;
 
     if (!matrix)
@@ -184,7 +184,7 @@ int **matrix_createTransitionMatrix(int size) {
     while (c != size-1) { /* Computing the next states */
         for (i=1; i<size; i++) {
             if (matrix[i][0] == -1) { /* if the state has not been treated yet */
-                prev_state = matrix_findPreviousState(matrix, i, size);
+                prev_state = matrix_getPreviousState(matrix, i, size);
                 if (prev_state != -1) {
                     matrix_setNextStates(matrix, i, prev_state, size);
                     c++;
