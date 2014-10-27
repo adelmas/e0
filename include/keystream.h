@@ -22,11 +22,8 @@ int st_next(int, int);
 int ct_next(int, int*);
 
 void matrix_setNextStates(int **, int, int, int);
-void matrix_display(int **, int);
 int matrix_getPreviousState(int **, int, int);
 void matrix_setOutputBits(int **, int);
-int **matrix_allocate(int);
-void matrix_desallocate(int **, int);
 int **matrix_createOutputMatrix(int);
 int **matrix_createTransitionMatrix(int);
 #endif // KEYSTREAM_H

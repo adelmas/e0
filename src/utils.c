@@ -28,3 +28,60 @@ void show_binary(int x) {
     }
     printf("\n");
 }
+
+/**
+ * Allocates a matrix.
+ * @param size Integer
+ * @return 2D integer array
+ */
+int **matrix_allocate(int size) {
+    int **matrix = NULL;
+    int i, j;
+
+    matrix = malloc(size*sizeof(int*));
+    if (!matrix)
+        exit(-1);
+
+    for (i=0; i<size; i++) {
+        matrix[i] = malloc(size*sizeof(int));
+        for (j=0; j<size; j++)
+            matrix[i][j] = -1;
+    }
+
+    return matrix;
+}
+
+/**
+ * Desallocates a matrix.
+ * @param matrix Pointer
+ * @param size Integer
+ */
+void matrix_desallocate(int **matrix, int size) {
+    int i;
+
+    if (!matrix)
+        return;
+
+    for (i=0; i<size; i++)
+        free(matrix[i]);
+
+    free(matrix);
+}
+
+/**
+ * Displays a matrix.
+ * @param matrix
+ * @param size
+ */
+void matrix_display(int **matrix, int size) {
+    int i, j;
+
+    if (!matrix)
+        return;
+
+    for (i=0; i<size; i++) {
+        for (j=0; j<size; j++)
+            printf("%.02d ", matrix[i][j]);
+        printf("\n");
+    }
+}
