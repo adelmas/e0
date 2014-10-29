@@ -17,7 +17,7 @@ int main(int argc, char *arv[]) {
     reg.r4.size = 39;
 
     // test avec le registre 4
-    printf("etat de depart : %016llX\n",start_4);
+    printf("%016llX\n", start_4);
     do {
         register_shift4(&reg.r4, 39, 36, 28, 4);
         printf("%d : ", i);

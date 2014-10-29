@@ -19,7 +19,7 @@ void register_shift4(Register *reg, int a, int b, int c, int d) {
     }
 
     lsb = ((reg->r >> (a-1))^(reg->r >> (b-1))^(reg->r >> (c-1))^(reg->r >> (d-1))) & 1;
-    reg->r = ((reg->r << 1) & masque) | lsb;
+    reg->r = ((reg->r << 1) & mask) | lsb;
 }
 
 /**

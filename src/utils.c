@@ -15,7 +15,7 @@ int bit_get(int x, int i, int n) {
 }
 
 /**
- * Displays the binary representation of an integer.
+ * Displays the binary representation of a 64 bits integer.
  * @param x Integer
  */
 void show_binary(uint64_t x) {
@@ -23,7 +23,7 @@ void show_binary(uint64_t x) {
 
     printf("%"PRIu64"\t: ", x);
     while (mask != 0) {
-        printf("%d", (x & mask)/mask);
+        printf("%d", (int)((x & mask)/mask));
         mask /= 2;
     }
     printf("\n");
