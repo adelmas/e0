@@ -18,10 +18,10 @@ int bit_get(int x, int i, int n) {
  * Displays the binary representation of an integer.
  * @param x Integer
  */
-void show_binary(int x) {
-    int mask = 1 << ((sizeof(x)*8)-2);
+void show_binary(uint64_t x) {
+    uint64_t mask = 1ull << (64-2);
 
-    printf("%d\t: ", x);
+    printf("%"PRIu64"\t: ", x);
     while (mask != 0) {
         printf("%d", (x & mask)/mask);
         mask /= 2;

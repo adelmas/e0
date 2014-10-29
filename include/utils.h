@@ -1,8 +1,11 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <stdint.h>
+#include <inttypes.h>
+
 int bit_get(int, int, int);
-void show_binary(int);
+void show_binary(uint64_t);
 
 int **matrix_allocate(int);
 void matrix_desallocate(int **, int);
