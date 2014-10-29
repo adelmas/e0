@@ -8,19 +8,20 @@
 #include "utils.h"
 
 int main(int argc, char *arv[]) {
-    uint64_t start = 2;
-    uint64_t lfsr = start;
+    uint64_t start_2 = 0x7FF8C245ull, start_4 = 0x1A02F1E555ull;
+    uint64_t lfsr = start_4;
     int i = 0;
     Registers reg;
 
-    reg.r1.r = lfsr;
-    reg.r1.size = 31;
+    reg.r4.r = lfsr;
+    reg.r4.size = 39;
 
-    show_binary(reg.r1.r);
+    // test avec le registre 4
+    printf("etat de depart : %016llX\n",start_4);
     do {
-        register_shift4(&reg.r1, 31, 24, 16, 12);
+        register_shift4(&reg.r4, 39, 36, 28, 4);
         printf("%d : ", i);
-        show_binary(reg.r1.r);
+        printf("%016llX\n", reg.r4.r);
         i++;
     } while (i != 10);
 
