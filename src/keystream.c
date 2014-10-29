@@ -12,7 +12,7 @@
 void register_shift4(Register *reg, int a, int b, int c, int d) {
     uint64_t lsb;
 
-    lsb = ((reg->r >> (reg->size-a))^(reg->r >> (reg->size-b))^(reg->r >> (reg->size-c))) & 1;
+    lsb = ((reg->r >> (reg->size-a))^(reg->r >> (reg->size-b))^(reg->r >> (reg->size-c))^(reg->r >> (reg->size-d))) & 1;
     reg->r = (reg->r >> 1) | (lsb << (reg->size-1));
 }
 
