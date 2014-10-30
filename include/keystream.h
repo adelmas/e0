@@ -17,6 +17,13 @@ struct Registers {
     Register r4;
 };
 
+typedef struct Keystream Keystream;
+struct Keystream {
+    Registers lfsr;
+    int **fsm;
+    int **output;
+};
+
 void register_shift4(Register*, int, int, int, int);
 int st_next(int, int);
 int ct_next(int, int*);

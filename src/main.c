@@ -8,44 +8,49 @@
 #include "utils.h"
 
 int main(int argc, char *arv[]) {
-    uint64_t start_2 = 0x7FF8C245ull, start_4 = 0x1A02F1E555ull;
-    uint64_t lfsr = start_4;
     int i = 0;
-    Registers reg;
+    Keystream keystream;
 
-    reg.r4.r = lfsr;
-    reg.r4.size = 39;
+    /* - LFSRs Testing ---- */
+    keystream.lfsr.r1.r = 0x1C45F25ull;
+    keystream.lfsr.r1.size = 25;
+    keystream.lfsr.r2.r = 0x7FF8C245ull;
+    keystream.lfsr.r2.size = 31;
+    keystream.lfsr.r3.r = 0x1893A206Bull;
+    keystream.lfsr.r3.size = 33;
+    keystream.lfsr.r4.r = 0x1A02F1E555ull;
+    keystream.lfsr.r4.size = 39;
 
-    // test avec le registre 4
-    printf("%016llX\n", start_4);
-    do {
-        register_shift4(&reg.r4, 39, 36, 28, 4);
-        printf("%d : ", i);
-        printf("%016llX\n", reg.r4.r);
-        i++;
-    } while (i != 10);
-
-    int **fsm = NULL, **output = NULL;
+    printf("%07llX %08llX %09llX %010llX\n", keystream.lfsr.r1.r, keystream.lfsr.r2.r, keystream.lfsr.r3.r, keystream.lfsr.r4.r);
+    for (i=0; i<15; i++) {
+        register_shift4(&keystream.lfsr.r1, 25, 20, 12, 8);
+        register_shift4(&keystream.lfsr.r2, 31, 24, 16, 12);
+        register_shift4(&keystream.lfsr.r3, 33, 28, 24, 4);
+        register_shift4(&keystream.lfsr.r4, 39, 36, 28, 4);
+        printf("%d :\t", i);
+        printf("%07llX %08llX %09llX %010llX %d\n", keystream.lfsr.r1.r, keystream.lfsr.r2.r, keystream.lfsr.r3.r, keystream.lfsr.r4.r, registers_getOutput(&keystream.lfsr));
+    }
+    /* ---- / ---- */
 
     /* - Finite State Machine ---- */
-    fsm = matrix_createTransitionMatrix(MATRIX_SIZE);
+    keystream.fsm = matrix_createTransitionMatrix(MATRIX_SIZE);
     #ifdef NDEBUG
     printf("Finite State Machine :\n");
-    matrix_display(fsm, MATRIX_SIZE);
+    matrix_display(keystream.fsm, MATRIX_SIZE);
     #endif
     /* ---- / ---- */
 
     /* - Output ---- */
-    output = matrix_createOutputMatrix(MATRIX_SIZE);
+    keystream.output = matrix_createOutputMatrix(MATRIX_SIZE);
     #ifdef NDEBUG
     printf("Output :\n");
-    matrix_display(output, MATRIX_SIZE);
+    matrix_display(keystream.output, MATRIX_SIZE);
     #endif
     /* ---- / ---- */
 
     /* - Free ---- */
-    matrix_desallocate(fsm, MATRIX_SIZE);
-    matrix_desallocate(output, MATRIX_SIZE);
+    matrix_desallocate(keystream.fsm, MATRIX_SIZE);
+    matrix_desallocate(keystream.output, MATRIX_SIZE);
 
     return 0;
 }

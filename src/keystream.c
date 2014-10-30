@@ -158,3 +158,12 @@ int **matrix_createOutputMatrix(int size) {
 
     return matrix;
 }
+
+/**
+ * Returns the output of the four LFSR converted into a 4 bits integer.
+ * @param reg
+ * @return
+ */
+int registers_getOutput(Registers *reg) {
+    return ((reg->r1.r >> 23) & 1) | ((reg->r2.r >> 22) & 2) | ((reg->r3.r >> 29) & 4) | ((reg->r4.r >> 28) & 8);
+}
