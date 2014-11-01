@@ -7,13 +7,15 @@
 #include "keystream.h"
 
 /**
-
+ * Shifts a linear register according to a 4 terms feedback polynomial.
+ * @param reg Pointer to a LFSR.
+ * @param a, b, c, d Integers, coefficients of the feedback polynomial.
  */
 void register_shift4(Register *reg, int a, int b, int c, int d) {
     uint64_t lsb, mask = 1ull;
     int i;
 
-    for(i=0; i<reg->size-1; i++) {
+    for(i=0; i<reg->size-1; i++) { /* Used to remove the MSB after shifting to the left */
         mask *= 2ull;
         mask |= 1ull;
     }
@@ -123,7 +125,7 @@ void matrix_setOutputBits(int **matrix, int size) {
  * @param size Integer, size of the matrix
  * @return Pointer to the 2D integer array
  */
-int **matrix_createTransitionMatrix(int size) {
+int **E0_matrix_createTransitionMatrix(int size) {
     int **matrix = NULL;
     int i, prev_state = 0, c = 0;
 
@@ -150,7 +152,7 @@ int **matrix_createTransitionMatrix(int size) {
  * @param size Integer
  * @return Pointer to the 2D integer array
  */
-int **matrix_createOutputMatrix(int size) {
+int **E0_matrix_createOutputMatrix(int size) {
     int **matrix = NULL;
 
     matrix = matrix_allocate(size);
@@ -164,6 +166,6 @@ int **matrix_createOutputMatrix(int size) {
  * @param reg
  * @return
  */
-int registers_getOutput(Registers *reg) {
+int E0_registers_getOutput(E0_registers *reg) {
     return ((reg->r1.r >> 23) & 1) | ((reg->r2.r >> 22) & 2) | ((reg->r3.r >> 29) & 4) | ((reg->r4.r >> 28) & 8);
 }

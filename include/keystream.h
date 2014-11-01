@@ -9,7 +9,7 @@ struct Register {
     int size;
 };
 
-typedef struct Registers Registers;
+typedef struct Registers E0_registers;
 struct Registers {
     Register r1;
     Register r2;
@@ -17,20 +17,16 @@ struct Registers {
     Register r4;
 };
 
-typedef struct Keystream Keystream;
+typedef struct Keystream E0_keystream;
 struct Keystream {
-    Registers lfsr;
+    E0_registers lfsr;
     int **fsm;
     int **output;
 };
 
 void register_shift4(Register*, int, int, int, int);
-int st_next(int, int);
-int ct_next(int, int*);
+int E0_registers_getOutput(E0_registers*);
 
-void matrix_setNextStates(int **, int, int, int);
-int matrix_getPreviousState(int **, int, int);
-void matrix_setOutputBits(int **, int);
-int **matrix_createOutputMatrix(int);
-int **matrix_createTransitionMatrix(int);
-#endif // KEYSTREAM_H
+int **E0_matrix_createOutputMatrix(int);
+int **E0_matrix_createTransitionMatrix(int);
+#endif
