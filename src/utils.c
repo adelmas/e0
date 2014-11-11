@@ -85,3 +85,20 @@ void matrix_display(int **matrix, int size) {
         printf("\n");
     }
 }
+
+/**
+ * Returns a mask to filter 64 bits integer.
+ * @param size Integer, mask's size
+ * @return Mask as a 64 bits integer
+ */
+uint64_t build_mask(int size) {
+    int i;
+    uint64_t mask = 1ull;
+
+    for(i=0; i<size-1; i++) {
+        mask *= 2ull;
+        mask |= 1ull;
+    }
+
+    return mask;
+}

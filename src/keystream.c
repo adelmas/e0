@@ -12,16 +12,10 @@
  * @param a, b, c, d Integers, coefficients of the feedback polynomial.
  */
 void register_shift4(Register *reg, int a, int b, int c, int d) {
-    uint64_t lsb, mask = 1ull;
-    int i;
-
-    for(i=0; i<reg->size-1; i++) { /* Used to remove the MSB after shifting to the left */
-        mask *= 2ull;
-        mask |= 1ull;
-    }
+    uint64_t lsb;
 
     lsb = ((reg->r >> (a-1))^(reg->r >> (b-1))^(reg->r >> (c-1))^(reg->r >> (d-1))) & 1;
-    reg->r = ((reg->r << 1) & mask) | lsb;
+    reg->r = ((reg->r << 1) & build_mask(reg->size)) | lsb;
 }
 
 /**
@@ -61,7 +55,7 @@ int ct_next(int st, int *ct) {
  * @param prev_state
  * @param size
  */
-void matrix_setNextStates(int **matrix, int state, int prev_state, int size) {
+void E0_matrix_setNextStates(int **matrix, int state, int prev_state, int size) {
     int i;
     int next_state, st, ct[2] = {0}, ct_tmp;
 
@@ -87,7 +81,7 @@ void matrix_setNextStates(int **matrix, int state, int prev_state, int size) {
  * @param size
  * @return Integer, one of the previous states.
  */
-int matrix_getPreviousState(int **matrix, int state, int size) {
+int E0_matrix_getPreviousState(int **matrix, int state, int size) {
     int i, j;
 
     if (!matrix)
@@ -108,7 +102,7 @@ int matrix_getPreviousState(int **matrix, int state, int size) {
  * @param matrix Array
  * @param size
  */
-void matrix_setOutputBits(int **matrix, int size) {
+void E0_matrix_setOutputBits(int **matrix, int size) {
     int i, j;
 
     if (!matrix)
@@ -131,13 +125,13 @@ int **E0_matrix_createTransitionMatrix(int size) {
 
     matrix = matrix_allocate(size);
 
-    matrix_setNextStates(matrix, 0, 0, 16); /* Initial state */
+    E0_matrix_setNextStates(matrix, 0, 0, 16); /* Initial state */
     while (c != size-1) { /* Computing the next states */
         for (i=1; i<size; i++) {
             if (matrix[i][0] == -1) { /* if the state has not been treated yet */
-                prev_state = matrix_getPreviousState(matrix, i, size);
+                prev_state = E0_matrix_getPreviousState(matrix, i, size);
                 if (prev_state != -1) {
-                    matrix_setNextStates(matrix, i, prev_state, size);
+                    E0_matrix_setNextStates(matrix, i, prev_state, size);
                     c++;
                 }
             }
@@ -156,7 +150,7 @@ int **E0_matrix_createOutputMatrix(int size) {
     int **matrix = NULL;
 
     matrix = matrix_allocate(size);
-    matrix_setOutputBits(matrix, size);
+    E0_matrix_setOutputBits(matrix, size);
 
     return matrix;
 }
@@ -169,3 +163,4 @@ int **E0_matrix_createOutputMatrix(int size) {
 int E0_registers_getOutput(E0_registers *reg) {
     return ((reg->r1.r >> 23) & 1) | ((reg->r2.r >> 22) & 2) | ((reg->r3.r >> 29) & 4) | ((reg->r4.r >> 28) & 8);
 }
+

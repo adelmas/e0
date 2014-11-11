@@ -6,12 +6,24 @@
 
 #include "keystream.h"
 #include "utils.h"
+#include "init.h"
 
 int main(int argc, char *arv[]) {
     int i = 0;
     E0_keystream keystream;
+    E0_init_param param;
+
+    /* - Initialization ---- */
+    param.kc[0] = 0ull;
+    param.kc[0] = 0ull;
+    param.addr = 0ull;
+    param.clk = 0ul;
+
+    E0_init(&param);
+    /* ---- / ---- */
 
     /* - LFSRs Testing ---- */
+    fprintf(stderr, "LFSR :\n");
     keystream.lfsr.r1.r = 0x1C45F25ull;
     keystream.lfsr.r1.size = 25;
     keystream.lfsr.r2.r = 0x7FF8C245ull;
