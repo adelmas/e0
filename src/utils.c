@@ -4,7 +4,7 @@
 #include "utils.h"
 
 /**
- * Returns the bit at position i (1 being the MSB).
+ * Returns the bit at position i (i=1 being the MSB).
  * @param  x
  * @param  i
  * @param  n
@@ -81,7 +81,7 @@ void matrix_display(int **matrix, int size) {
 
     for (i=0; i<size; i++) {
         for (j=0; j<size; j++)
-            printf("%.02d ", matrix[i][j]);
+            printf("%.02d, ", matrix[i][j]);
         printf("\n");
     }
 }

@@ -125,7 +125,7 @@ int **E0_matrix_createTransitionMatrix(int size) {
 
     matrix = matrix_allocate(size);
 
-    E0_matrix_setNextStates(matrix, 0, 0, 16); /* Initial state */
+    E0_matrix_setNextStates(matrix, 0, 0, 16); /* Initial state (first line of the matrix) */
     while (c != size-1) { /* Computing the next states */
         for (i=1; i<size; i++) {
             if (matrix[i][0] == -1) { /* if the state has not been treated yet */
@@ -156,11 +156,75 @@ int **E0_matrix_createOutputMatrix(int size) {
 }
 
 /**
- * Returns the output of the four LFSR converted into a 4 bits integer.
+ * Shifts the 4 LFSR and returns the output converted into a 4 bits integer.
  * @param reg
- * @return
+ * @return output on 4 bits
  */
-int E0_registers_getOutput(E0_registers *reg) {
-    return ((reg->r1.r >> 23) & 1) | ((reg->r2.r >> 22) & 2) | ((reg->r3.r >> 29) & 4) | ((reg->r4.r >> 28) & 8);
+int E0_registers_shift(E0_registers *reg) {
+    if (!reg)
+        return -1;
+
+    register_shift4(&reg->r1, 25, 20, 12, 8);
+    register_shift4(&reg->r2, 31, 24, 16, 12);
+    register_shift4(&reg->r3, 33, 28, 24, 4);
+    register_shift4(&reg->r4, 39, 36, 28, 4);
+
+    return E0_registers_getOutputBit(reg);
+}
+
+/**
+ * Computes and returns the output bit of the four LFSR.
+ * @param reg Pointer to the 4 LFSR
+ * @return Output bit
+ */
+int E0_registers_getOutputBit(E0_registers *reg) {
+    if (!reg)
+        return -1;
+    return (((reg->r1.r >> 23) & 1) | ((reg->r2.r >> 22) & 2) | ((reg->r3.r >> 29) & 4) | ((reg->r4.r >> 28) & 8));
+}
+
+/**
+ * Get the next state of the State Machine according the the current state and
+ * the registers' output bit.
+ * @param fsm
+ * @param state
+ * @param reg_output
+ * @return Integer, Next state
+ */
+int E0_getNextState(int **fsm, int state, int reg_output) {
+    if (!fsm)
+        return -1;
+    return fsm[state][reg_output];
+}
+
+/**
+ * Gets and returns one bit of the key sequence.
+ * @param output
+ * @param state
+ * @param reg_output
+ * @return Integer, One bit of key sequence
+ */
+int E0_getBitKey(int **output, int state, int reg_output) {
+    if (!output)
+        return -1;
+    return output[state][reg_output] & 1;
+}
+
+/**
+ * Main function : shifts the registers, get their output, jump to
+ * the next fsm state and returns one bit of key sequence.
+ * @param k
+ * @return Integer, one bit of key sequence
+ */
+int E0_shift(E0_keystream *k) {
+    int state, reg_output;
+
+    reg_output = E0_registers_shift(&k->lfsr);
+    state = k->state;
+    k->state = E0_getNextState(k->fsm, state, reg_output);
+    k->reg_output = reg_output;
+    k->key = E0_getBitKey(k->output, state, reg_output);
+
+    return k->key;
 }
 
