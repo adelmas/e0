@@ -70,11 +70,11 @@ void E0_init(E0_init_param *param, E0_keystream *keystream) {
             keystream->lfsr.r4.r--;
 
 
-        /* 2.c) Feedbacks are replaced by input bits */
-        keystream->lfsr.r1.r = keystream->lfsr.r1.r ^ (input[0] & 1);
-        keystream->lfsr.r2.r = keystream->lfsr.r2.r ^ (input[1] & 1);
-        keystream->lfsr.r3.r = keystream->lfsr.r3.r ^ (input[2] & 1);
-        keystream->lfsr.r4.r = keystream->lfsr.r4.r ^ (input[3] & 1);
+        /* 2.c) Shifting input bits into LFSRs */
+        keystream->lfsr.r1.r ^= (input[0] & 1);
+        keystream->lfsr.r2.r ^= (input[1] & 1);
+        keystream->lfsr.r3.r ^= (input[2] & 1);
+        keystream->lfsr.r4.r ^= (input[3] & 1);
 
         for (j=0; j<4; j++)
             input[j] >>= 1;
