@@ -1,4 +1,3 @@
 Readme E0
 =====
-bla
-test 14
+A C implementation of the Bluetooth stream cipher E0
