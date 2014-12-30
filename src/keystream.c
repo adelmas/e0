@@ -228,3 +228,8 @@ int E0_shift(E0_keystream *k) {
     return k->key;
 }
 
+void E0_close(E0_keystream *k) {
+    matrix_desallocate(k->fsm, E0_MATRIXSIZE);
+    matrix_desallocate(k->output, E0_MATRIXSIZE);
+}
+

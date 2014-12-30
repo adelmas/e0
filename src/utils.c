@@ -23,10 +23,10 @@ void show_binary(uint64_t x) {
 
     printf("%"PRIu64"\t: ", x);
     while (mask != 0) {
-        printf("%d", (int)((x & mask)/mask));
+        fprintf(stdout, "%d", (int)((x & mask)/mask));
         mask /= 2;
     }
-    printf("\n");
+    fprintf(stdout, "\n");
 }
 
 /**
@@ -81,8 +81,8 @@ void matrix_display(int **matrix, int size) {
 
     for (i=0; i<size; i++) {
         for (j=0; j<size; j++)
-            printf("%.02d, ", matrix[i][j]);
-        printf("\n");
+            fprintf(stdout, "%2d, ", matrix[i][j]);
+        fprintf(stdout, "\n");
     }
 }
 

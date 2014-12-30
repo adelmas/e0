@@ -1,7 +1,7 @@
 #ifndef KEYSTREAM_H
 #define KEYSTREAM_H
 
-#define MATRIX_SIZE 16
+#define E0_MATRIXSIZE 16
 
 typedef struct Register Register;
 struct Register {
@@ -36,4 +36,6 @@ int E0_getBitKey(int **, int, int);
 
 int **E0_matrix_createOutputMatrix(int);
 int **E0_matrix_createTransitionMatrix(int);
+void E0_close(E0_keystream *);
+
 #endif

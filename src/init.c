@@ -5,6 +5,41 @@
 #include "init.h"
 
 /**
+ * Fills a E0_keystream structure with proper parameters.
+ * @param k
+ */
+void E0_setup(E0_keystream *k) {
+    if (!k)
+        return;
+
+    /* - Finite State Machine ---- */
+    k->fsm = E0_matrix_createTransitionMatrix(E0_MATRIXSIZE);
+    #ifdef NDEBUG
+    fprintf(stdout, "Finite State Machine :\n");
+    matrix_display(k->fsm, MATRIX_SIZE);
+    #endif
+
+    /* - Output ---- */
+    k->output = E0_matrix_createOutputMatrix(E0_MATRIXSIZE);
+    #ifdef NDEBUG
+    fprintf(stdout, "Output :\n");
+    matrix_display(k->output, MATRIX_SIZE);
+    #endif
+
+    /* - LFSRs ---- */
+    k->lfsr.r1.size = 25;
+    k->lfsr.r2.size = 31;
+    k->lfsr.r3.size = 33;
+    k->lfsr.r4.size = 39;
+    k->lfsr.r1.r = 0;
+    k->lfsr.r2.r = 0;
+    k->lfsr.r3.r = 0;
+    k->lfsr.r4.r = 0;
+    k->state = 0;
+    k->reg_output = 0;
+}
+
+/**
  * Main init function
  * Initializes the E0 algorithm given Kc, RAND and CLK.
  * @param param
@@ -15,10 +50,10 @@ void E0_init(E0_init_param *param, E0_keystream *keystream) {
     uint8_t z[16]; /* 128 bits output symbols */
     uint64_t input[4] = {0};
 
-    keystream->lfsr.r1.size = 25;
-    keystream->lfsr.r2.size = 31;
-    keystream->lfsr.r3.size = 33;
-    keystream->lfsr.r4.size = 39;
+    if (!param || !keystream)
+        return;
+
+    E0_setup(keystream);
 
     /* Input (Core_v4.1 p.1592) */
     /* 2.b) */
@@ -32,28 +67,21 @@ void E0_init(E0_init_param *param, E0_keystream *keystream) {
                 ((uint64_t)param->addr[1] << 39)|((uint64_t)param->addr[5] << 47);
 
     #ifdef NDEBUG
-    fprintf(stderr, "Input :\n");
+    fprintf(stdout, "Input :\n");
     for (i=0; i<4; i++)
-        fprintf(stderr, "%x\n", input[i]);
+        fprintf(stdout, "%x\n", input[i]);
     #endif
-
-    keystream->lfsr.r1.r = 0;
-    keystream->lfsr.r2.r = 0;
-    keystream->lfsr.r3.r = 0;
-    keystream->lfsr.r4.r = 0;
-    keystream->state = 0;
-    keystream->reg_output = 0;
 
     for (i=0; i<240; i++) {
         #ifdef NDEBUG
-        fprintf(stderr, "%d %07llX %08llX %09llX %010llX %d\n", i, keystream->lfsr.r1.r, keystream->lfsr.r2.r, keystream->lfsr.r3.r, keystream->lfsr.r4.r, keystream->reg_output);
+        fprintf(stdout, "%d %07llX %08llX %09llX %010llX %d\n", i, keystream->lfsr.r1.r, keystream->lfsr.r2.r, keystream->lfsr.r3.r, keystream->lfsr.r4.r, keystream->reg_output);
         #endif
 
         /* 2.e) */
         if (i < 39)
             keystream->state = 0;
 
-        /* 2.4 (c_t-1) */
+        /* 2.4 Keep blend registers c_t and c_t–1 */
         if (i == 238)
             sv = keystream->state;
 
@@ -89,7 +117,7 @@ void E0_init(E0_init_param *param, E0_keystream *keystream) {
 
     #ifdef NDEBUG
     for (i=0; i<16; i++)
-        printf("z[%d] = %x\n", i, z[i]);
+        fprintf(stdout, "z[%d] = %x\n", i, z[i]);
     #endif
 
     /* p. 1593 */
