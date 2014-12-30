@@ -45,7 +45,7 @@ int main(int argc, char *arv[]) {
 
     #ifdef NDEBUG
     t2 = clock();
-    fprintf(stdout, "\n%f s elpased\n", (float)(t2 - t1)/CLOCKS_PER_SEC);
+    fprintf(stdout, "\n%f s elapsed\n", (float)(t2 - t1)/CLOCKS_PER_SEC);
     #endif
 
     /* - Free ---- */
