@@ -3,6 +3,7 @@
 #include <inttypes.h>
 
 #include "init.h"
+#define NDEBUG
 
 /**
  * Fills a E0_keystream structure with proper parameters.
@@ -16,15 +17,16 @@ void E0_setup(E0_keystream *k) {
     k->fsm = E0_matrix_createTransitionMatrix(E0_MATRIXSIZE);
     #ifdef NDEBUG
     fprintf(stdout, "Finite State Machine :\n");
-    matrix_display(k->fsm, MATRIX_SIZE);
+    matrix_display(k->fsm, E0_MATRIXSIZE);
     #endif
 
     /* - Output ---- */
     k->output = E0_matrix_createOutputMatrix(E0_MATRIXSIZE);
     #ifdef NDEBUG
     fprintf(stdout, "Output :\n");
-    matrix_display(k->output, MATRIX_SIZE);
+    matrix_display(k->output, E0_MATRIXSIZE);
     #endif
+    getchar();
 
     /* - LFSRs ---- */
     k->lfsr.r1.size = 25;
