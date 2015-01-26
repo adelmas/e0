@@ -3,10 +3,10 @@
 #include <inttypes.h>
 
 #include "init.h"
-#define NDEBUG
 
 /**
- * Fills a E0_keystream structure with proper parameters.
+ * Fills a E0_keystream structure with proper parameters needed
+ * for initialization.
  * @param k
  */
 void E0_setup(E0_keystream *k) {
@@ -20,13 +20,12 @@ void E0_setup(E0_keystream *k) {
     matrix_display(k->fsm, E0_MATRIXSIZE);
     #endif
 
-    /* - Output ---- */
+    /* - Output bits ---- */
     k->output = E0_matrix_createOutputMatrix(E0_MATRIXSIZE);
     #ifdef NDEBUG
     fprintf(stdout, "Output :\n");
     matrix_display(k->output, E0_MATRIXSIZE);
     #endif
-    getchar();
 
     /* - LFSRs ---- */
     k->lfsr.r1.size = 25;
@@ -48,7 +47,7 @@ void E0_setup(E0_keystream *k) {
  * @param keystream
  */
 void E0_init(E0_init_param *param, E0_keystream *keystream) {
-    int i, z_i = 0, j, sv = 0;
+    int sv_state = 0, i, z_i = 0, j;
     uint8_t z[16]; /* 128 bits output symbols */
     uint64_t input[4] = {0};
 
@@ -61,11 +60,11 @@ void E0_init(E0_init_param *param, E0_keystream *keystream) {
     /* 2.b) */
     input[0] = ((uint64_t)param->clk[3] & 1)|((uint64_t)param->kc[0] << 1)|((uint64_t)param->kc[4] << 9)|
                 ((uint64_t)param->kc[8] << 17)|((uint64_t)param->kc[12] << 25)|((uint64_t)param->clk[1] << 33)|((uint64_t)param->addr[2] << 41);
-    input[1] = 0x1ull|((uint64_t)param->clk[0] << 3)|((uint64_t)param->kc[1] << 7)|((uint64_t)param->kc[5] << 15)|((uint64_t)param->kc[9] << 23)|((uint64_t)param->kc[13] << 31)|
+    input[1] = (uint64_t)0x1ull|((uint64_t)param->clk[0] << 3)|((uint64_t)param->kc[1] << 7)|((uint64_t)param->kc[5] << 15)|((uint64_t)param->kc[9] << 23)|((uint64_t)param->kc[13] << 31)|
                 ((uint64_t)param->addr[0] << 39)|((uint64_t)param->addr[3] << 47);
     input[2] = ((uint64_t)param->clk[3] >> 1)|((uint64_t)param->kc[2] << 1)|((uint64_t)param->kc[6] << 9)|((uint64_t)param->kc[10] << 17)|((uint64_t)param->kc[14] << 25)|
                 ((uint64_t)param->clk[2] << 33)|((uint64_t)param->addr[4] << 41);
-    input[3] = 0x7ull|(((uint64_t)param->clk[0] >> 4) << 3)|((uint64_t)param->kc[3] << 7)|((uint64_t)param->kc[7] << 15)|((uint64_t)param->kc[11] << 23)|((uint64_t)param->kc[15] << 31)|
+    input[3] = (uint64_t)0x7ull|(((uint64_t)param->clk[0] >> 4) << 3)|((uint64_t)param->kc[3] << 7)|((uint64_t)param->kc[7] << 15)|((uint64_t)param->kc[11] << 23)|((uint64_t)param->kc[15] << 31)|
                 ((uint64_t)param->addr[1] << 39)|((uint64_t)param->addr[5] << 47);
 
     #ifdef NDEBUG
@@ -80,12 +79,14 @@ void E0_init(E0_init_param *param, E0_keystream *keystream) {
         #endif
 
         /* 2.e) */
-        if (i < 39)
+        if (i < 39) {
             keystream->state = 0;
+        }
 
         /* 2.4 Keep blend registers c_t and c_t–1 */
-        if (i == 238)
-            sv = keystream->state;
+        else if (i == 238) {
+            sv_state = keystream->state;
+        }
 
         E0_shift(keystream);
 
@@ -133,5 +134,5 @@ void E0_init(E0_init_param *param, E0_keystream *keystream) {
     /* p. 1592 : It is a parallel load and no update of the blend registers is done (no shift) */
     keystream->reg_output = E0_registers_getOutputBit(&keystream->lfsr);
     keystream->key = E0_getBitKey(keystream->output, keystream->state, keystream->reg_output); /* Before jumping to the next state */
-    keystream->state = E0_getNextState(keystream->fsm, sv, keystream->reg_output);
+    keystream->state = E0_getNextState(keystream->fsm, sv_state, keystream->reg_output);
 }

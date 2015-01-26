@@ -19,7 +19,7 @@ int bit_get(int x, int i, int n) {
  * @param x Integer
  */
 void show_binary(uint64_t x) {
-    uint64_t mask = 1ull << (64-2);
+    uint64_t mask = 1llu << (64-2);
 
     printf("%"PRIu64"\t: ", x);
     while (mask != 0) {

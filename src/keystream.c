@@ -11,7 +11,7 @@
  * @param reg Pointer to a LFSR.
  * @param a, b, c, d Integers, coefficients of the feedback polynomial.
  */
-void register_shift4(Register *reg, int a, int b, int c, int d) {
+void register_shift4(Register *reg, const int a, const int b, const int c, const int d) {
     uint64_t lsb;
 
     lsb = ((reg->r >> (a-1))^(reg->r >> (b-1))^(reg->r >> (c-1))^(reg->r >> (d-1))) & 1;
@@ -24,7 +24,7 @@ void register_shift4(Register *reg, int a, int b, int c, int d) {
  * @param ct Integer, current state
  * @return Integer, st+1
  */
-int st_next(int input, int ct) {
+int st_next(const int input, const int ct) {
     int yt = bit_get(input, 1, 4)+bit_get(input, 2, 4)+bit_get(input, 3, 4)+bit_get(input, 4, 4);
     return (yt + ct)/2;
 }
@@ -34,7 +34,7 @@ int st_next(int input, int ct) {
  * @param ct 2 bits Integer
  * @return Integer
  */
-int T2(int ct) {
+int T2(const int ct) {
     return ((bit_get(ct, 2, 2)^bit_get(ct, 1, 2))|(ct<<1)) & 3;
 }
 
@@ -44,7 +44,7 @@ int T2(int ct) {
  * @param ct Array
  * @return Integer, XOR output
  */
-int ct_next(int st, int *ct) {
+int ct_next(const int st, int *ct) {
     return st^ct[1]^T2(ct[0]);
 }
 
@@ -55,7 +55,7 @@ int ct_next(int st, int *ct) {
  * @param prev_state
  * @param size
  */
-void E0_matrix_setNextStates(int **matrix, int state, int prev_state, int size) {
+void E0_matrix_setNextStates(int **matrix, const int state, const int prev_state, const int size) {
     int i;
     int next_state, st, ct[2] = {0}, ct_tmp;
 
@@ -81,7 +81,7 @@ void E0_matrix_setNextStates(int **matrix, int state, int prev_state, int size) 
  * @param size
  * @return Integer, one of the previous states.
  */
-int E0_matrix_getPreviousState(int **matrix, int state, int size) {
+int E0_matrix_getPreviousState(int **matrix, const int state, const int size) {
     int i, j;
 
     if (!matrix)
@@ -102,7 +102,7 @@ int E0_matrix_getPreviousState(int **matrix, int state, int size) {
  * @param matrix Array
  * @param size
  */
-void E0_matrix_setOutputBits(int **matrix, int size) {
+void E0_matrix_setOutputBits(int **matrix, const int size) {
     int i, j;
 
     if (!matrix)
@@ -119,7 +119,7 @@ void E0_matrix_setOutputBits(int **matrix, int size) {
  * @param size Integer, size of the matrix
  * @return Pointer to the 2D integer array
  */
-int **E0_matrix_createTransitionMatrix(int size) {
+int **E0_matrix_createTransitionMatrix(const int size) {
     int **matrix = NULL;
     int i, prev_state = 0, c = 0;
 
@@ -146,7 +146,7 @@ int **E0_matrix_createTransitionMatrix(int size) {
  * @param size Integer
  * @return Pointer to the 2D integer array
  */
-int **E0_matrix_createOutputMatrix(int size) {
+int **E0_matrix_createOutputMatrix(const int size) {
     int **matrix = NULL;
 
     matrix = matrix_allocate(size);
@@ -191,7 +191,7 @@ int E0_registers_getOutputBit(E0_registers *reg) {
  * @param reg_output
  * @return Integer, Next state
  */
-int E0_getNextState(int **fsm, int state, int reg_output) {
+int E0_getNextState(int **fsm, const int state, const int reg_output) {
     if (!fsm)
         return -1;
     return fsm[state][reg_output];
@@ -204,7 +204,7 @@ int E0_getNextState(int **fsm, int state, int reg_output) {
  * @param reg_output
  * @return Integer, One bit of key sequence
  */
-int E0_getBitKey(int **output, int state, int reg_output) {
+int E0_getBitKey(int **output, const int state, const int reg_output) {
     if (!output)
         return -1;
     return output[state][reg_output] & 1;
@@ -228,6 +228,10 @@ int E0_shift(E0_keystream *k) {
     return k->key;
 }
 
+/**
+ * Frees fsm and output matrix
+ * @param k
+ */
 void E0_close(E0_keystream *k) {
     matrix_desallocate(k->fsm, E0_MATRIXSIZE);
     matrix_desallocate(k->output, E0_MATRIXSIZE);
