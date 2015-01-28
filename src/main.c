@@ -7,6 +7,7 @@
 #include "keystream.h"
 #include "utils.h"
 #include "init.h"
+#include "users.h"
 
 #define NDEBUG
 
@@ -21,6 +22,8 @@ int main(int argc, char *arv[]) {
       { 0x5f, 0x1a, 0x00, 0x02 }
     };
 
+    char pathRead[] = "Test.txt", pathWrite[] = "encrypted.txt";
+
     #ifdef NDEBUG
     clock_t t1, t2;
     t1 = clock();
@@ -30,7 +33,7 @@ int main(int argc, char *arv[]) {
     E0_init(&param, &keystream);
     /* ---- / ---- */
 
-    /* - Key sequence testing ---- */
+    /* - Key sequence testing ----
     for (i=0; i<20; i++) {
         for (j=0; j<8; j++) {
             key |= (uint8_t)keystream.key << j;
@@ -40,8 +43,12 @@ int main(int argc, char *arv[]) {
         fprintf(stdout, "%02x\n", key);
         #endif
         key = 0;
-    }
+    }*/
     /* ---- / ---- */
+
+    E0_encryptFile(pathRead, pathWrite, &keystream);
+    E0_init(&param, &keystream);
+    E0_encryptFile(pathWrite, "test_decrypt.txt", &keystream);
 
     #ifdef NDEBUG
     t2 = clock();

@@ -3,6 +3,7 @@
 #include <inttypes.h>
 
 #include "init.h"
+#include "utils.h"
 
 /**
  * Fills a E0_keystream structure with proper parameters needed
