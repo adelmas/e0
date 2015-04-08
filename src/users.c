@@ -3,6 +3,8 @@
 #include <inttypes.h>
 #include "users.h"
 
+#define CHUNK 5120
+
 /**
  * Encrypts a file
  * @param pathRead
@@ -13,8 +15,8 @@
 int E0_encryptFile(char* pathRead, char *pathWrite, E0_keystream *k) {
     FILE* fRead = fopen(pathRead,"rb");
     FILE *fWrite = fopen(pathWrite, "wb+");
-    char car, encrypted;
-    int i;
+    char car[CHUNK] = "", encrypted[CHUNK] = "";
+    int i, j, read;
     uint8_t key = 0;
 
     if (!fRead || !fWrite) {
@@ -22,13 +24,15 @@ int E0_encryptFile(char* pathRead, char *pathWrite, E0_keystream *k) {
         printf("Erreur ouverture des fichiers");
     }
     else {
-        while(fread(&car, sizeof(char), 1, fRead) > 0) {
-            for (i=0; i<8; i++) {
-                key |= (uint8_t)k->key << i;
-                E0_shift(k);
+        while((read = fread(&car, 1, CHUNK, fRead)) > 0) {
+            for (j=0; j<read; j++) {
+                for (i=0; i<8; i++) {
+                    key |= (uint8_t)k->key << i;
+                    E0_shift(k);
+                }
+                encrypted[j] = car[j]^key;
             }
-            encrypted = car^key;
-            fwrite(&encrypted, sizeof(char), 1, fWrite);
+            fwrite(&encrypted, 1, CHUNK, fWrite);
         }
 
     }
