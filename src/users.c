@@ -19,6 +19,7 @@ int E0_encryptFile(char* pathRead, char *pathWrite, E0_keystream *k) {
 
     if (!fRead || !fWrite) {
         return -1;
+        printf("Erreur ouverture des fichiers");
     }
     else {
         while(fread(&car, sizeof(char), 1, fRead) > 0) {
